@@ -3,6 +3,12 @@ name: Generate Requirements
 
 on:
   workflow_dispatch:
+  
+  push:
+    paths:
+      - poetry.lock
+      - pyproject.toml
+      - requirements.txt
 
 jobs:
   generate:
