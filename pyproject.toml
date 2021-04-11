@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ATRI"
-version = "YHN-001-A01"
+version = "YHN.001.A01"
 description = "适用于QQ群中的二刺螈BOT"
 authors = ["Your Name <you@example.com>"]
 license = "GPLv3"
