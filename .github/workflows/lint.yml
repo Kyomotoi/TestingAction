@@ -2,115 +2,83 @@
 # # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-# name: Lint
-
-# on:
-#   push:
-#     paths:
-#       - "**.py"
-#       - "**.pyi"
-#       - ".github/workflows/lint.yml"
-#   pull_request:
-#     branches:
-#       - master
-
-# jobs:
-#   lint:
-#     runs-on: ubuntu-latest
-#     name: Lint Code
-
-#     steps:
-#       - uses: actions/checkout@v2
-
-#       - uses: actions/setup-python@v2
-#         with:
-#           python-version: 3.8
-
-#       - uses: Gr1N/setup-poetry@v4
-
-#       - uses: actions/cache@v2
-#         with:
-#           path: ~/.cache/pypoetry
-#           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-
-#       - name: Install Dependencies
-#         env:
-#           POETRY_VIRTUALENVS_CREATE: "false"
-#         run: |
-#           poetry install
-#       - uses: wearerequired/lint-action@v1
-#         with:
-#           auto_fix: true
-#           flake8: true
-#           flake8_args: "--config .flake8"
-#           mypy: true
-#           mypy_args: ". --config .mypy.ini"
-#           black: true
-#           commit_message: ":rotating_light: 自动进行代码格式化"
-#           git_email: noreply@github.com
-
-#   analyze:
-#     runs-on: ubuntu-latest
-#     name: CodeQL Analyze
-
-#     steps:
-#       - uses: actions/checkout@v2
-
-#       - uses: actions/setup-python@v2
-#         with:
-#           python-version: 3.8
-
-#       - uses: Gr1N/setup-poetry@v4
-
-#       - uses: actions/cache@v2
-#         with:
-#           path: ~/.cache/pypoetry
-#           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-
-#       - name: Install Dependencies
-#         env:
-#           POETRY_VIRTUALENVS_CREATE: "false"
-#         run: |
-#           poetry install
-#       - name: Initialize CodeQL
-#         uses: github/codeql-action/init@v1
-#         with:
-#           languages: python
-#           # Override the default behavior so that the action doesn't attempt
-#           # to auto-install Python dependencies
-#           setup-python-dependencies: false
-
-#       - name: Perform CodeQL Analysis
-#         uses: github/codeql-action/analyze@v1
-
-name: Flake8
+name: Lint
 
 on:
   push:
+    paths:
+      - "**.py"
+      - "**.pyi"
+      - ".github/workflows/lint.yml"
   pull_request:
-    branches: ["main"]
+    branches:
+      - main
 
 jobs:
-  Run:
-    name: "Flake8"
-    runs-on: "ubuntu-latest"
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint Code
 
     steps:
-      - name: Checkout 🛎️
-        uses: "actions/checkout@v2"
+      - uses: actions/checkout@v2
 
-      - name: Setup Python 🐍
-        uses: "actions/setup-python@v2"
+      - uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
+          python-version: 3.8
 
-      - name: Install dependencies 🔧
+      - uses: Gr1N/setup-poetry@v4
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
+      - name: Install Dependencies
+        env:
+          POETRY_VIRTUALENVS_CREATE: "false"
         run: |
-          python -VV
-          python -m site
-          python -m pip install --upgrade pip setuptools wheel
-          python -m pip install flake8
-          python -m pip install flake8-github-actions
+          poetry install
+      - uses: wearerequired/lint-action@v1
+        with:
+          auto_fix: true
+          flake8: true
+          flake8_args: "--config .flake8"
+          mypy: true
+          mypy_args: ". --config .mypy.ini"
+          black: true
+          commit_message: ":rotating_light: 自动进行代码格式化"
+          git_email: noreply@github.com
 
-      - name: "Run Flake8"
-        run: "flake8 --format github"
+  analyze:
+    runs-on: ubuntu-latest
+    name: CodeQL Analyze
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - uses: Gr1N/setup-poetry@v4
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
+      - name: Install Dependencies
+        env:
+          POETRY_VIRTUALENVS_CREATE: "false"
+        run: |
+          poetry install
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: python
+          # Override the default behavior so that the action doesn't attempt
+          # to auto-install Python dependencies
+          setup-python-dependencies: false
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
