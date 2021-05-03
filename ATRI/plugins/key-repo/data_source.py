@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional
 
 
-KEYREPO_DIV = Path('.') / 'ATRI' / 'data' / 'database' / 'KeyRepo'
+KEYREPO_DIV = Path(".") / "ATRI" / "data" / "database" / "KeyRepo"
 os.makedirs(KEYREPO_DIV, exist_ok=True)
 
 
@@ -14,7 +14,7 @@ def load_key_data() -> dict:
     try:
         data = json.loads(path.read_bytes())
     except:
-        with open(path, 'w') as r:
+        with open(path, "w") as r:
             r.write(json.dumps({}))
         data = {}
     return data
@@ -26,7 +26,7 @@ def load_key_temp_data() -> list:
     try:
         data = json.loads(path.read_bytes())
     except:
-        with open(path, 'w') as r:
+        with open(path, "w") as r:
             r.write(json.dumps([]))
         data = []
     return data
@@ -38,7 +38,7 @@ def load_key_history() -> list:
     try:
         data = json.loads(path.read_bytes())
     except:
-        with open(path, 'w') as r:
+        with open(path, "w") as r:
             r.write(json.dumps([]))
         data = []
     return data
@@ -47,21 +47,21 @@ def load_key_history() -> list:
 def save_key_data(d: dict) -> None:
     file_name = "data.json"
     path = KEYREPO_DIV / file_name
-    with open(path, 'w') as r:
+    with open(path, "w") as r:
         r.write(json.dumps(d))
 
 
 def save_key_temp_data(d: list) -> None:
     file_name = "data.temp.json"
     path = KEYREPO_DIV / file_name
-    with open(path, 'w') as r:
+    with open(path, "w") as r:
         r.write(json.dumps(d))
 
 
 def save_key_history_data(d: list) -> None:
     file_name = "data.history.json"
     path = KEYREPO_DIV / file_name
-    with open(path, 'w') as r:
+    with open(path, "w") as r:
         r.write(json.dumps(d))
 
 
@@ -84,7 +84,7 @@ def add_key_temp(d: dict) -> None:
 
 
 def add_history(d: dict, p: bool = True) -> None:
-    d['pass'] = p
+    d["pass"] = p
     data: list = load_key_history()
     data.append(d)
     save_key_history_data(data)
@@ -92,7 +92,7 @@ def add_history(d: dict, p: bool = True) -> None:
 
 def del_key(key: str, repo: str) -> str:
     data = load_key_data()
-    if repo == 'isALL':
+    if repo == "isALL":
         del data[key]
         msg = f"成功删除关键词[{key}]下所有回复..."
     else:
@@ -100,7 +100,7 @@ def del_key(key: str, repo: str) -> str:
         try:
             data_1.remove(key)
         except KeyError:
-            raise KeyError('Find repo error.')
+            raise KeyError("Find repo error.")
         data[key] = data_1
         msg = f"成功删除关键词[{key}]下回复：{repo}"
     save_key_data(data)

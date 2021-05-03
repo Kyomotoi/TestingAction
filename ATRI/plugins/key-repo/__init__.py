@@ -16,7 +16,7 @@ from .data_source import (
     add_key,
     load_key_history,
     load_key_temp_data,
-    del_key_temp
+    del_key_temp,
 )
 
 
@@ -28,7 +28,8 @@ from .data_source import (
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-keyrepo = sv.on_message(rule=is_in_service('keyrepo') & to_bot())
+keyrepo = sv.on_message(rule=is_in_service("keyrepo") & to_bot())
+
 
 @keyrepo.handle()
 async def _keyrepo(bot: Bot, event: MessageEvent) -> None:
@@ -58,30 +59,24 @@ __doc__ = """
   /train add hso 好涩哦
 """
 
-train = sv.on_command(
-    cmd="/train",
-    docs=__doc__
-)
+train = sv.on_command(cmd="/train", docs=__doc__)
+
 
 @train.handle()
 async def _train(bot: Bot, event: GroupMessageEvent) -> None:
     user = event.user_id
     group = event.group_id
-    
-    msg = str(event.message).split(' ')
+
+    msg = str(event.message).split(" ")
     _type = msg[0]
     code = "".join(sample(string.ascii_letters + string.digits, 10))
-    
+
     if _type == "add":
         key = msg[1]
         args = msg[2]
         if user in Config.BotSelfConfig.superusers:
             add_key(key, args)
-            msg = (
-                "好欸学到了新的知识！\n"
-                f"关键词：{key}\n"
-                f"回复：{args}"
-            )
+            msg = "好欸学到了新的知识！\n" f"关键词：{key}\n" f"回复：{args}"
             data = {
                 "user": user,
                 "group": group,
@@ -89,7 +84,7 @@ async def _train(bot: Bot, event: GroupMessageEvent) -> None:
                 "pass": True,
                 "key": key,
                 "repo": args,
-                "feature": code
+                "feature": code,
             }
             add_history(data)
             await train.finish(msg)
@@ -101,7 +96,7 @@ async def _train(bot: Bot, event: GroupMessageEvent) -> None:
                 "pass": False,
                 "key": key,
                 "repo": args,
-                "feature": code
+                "feature": code,
             }
             add_key_temp(data)
             msg = (
@@ -118,26 +113,28 @@ async def _train(bot: Bot, event: GroupMessageEvent) -> None:
                 "type": "node",
                 "data": {
                     "name": "idk",
-                    "uin": i['user'],
-                    "content": f"Key: {i['key']}\nRepo: {i['repo']}\nTime: {i['time']}"
-                }
+                    "uin": i["user"],
+                    "content": f"Key: {i['key']}\nRepo: {i['repo']}\nTime: {i['time']}",
+                },
             }
             node.append(dic)
         if not node:
-            node = [{
-                "type": "node",
-                "data": {
-                    "name": "null",
-                    "uin": str(user),
-                    "content": "这里什么也没有呢..."
+            node = [
+                {
+                    "type": "node",
+                    "data": {
+                        "name": "null",
+                        "uin": str(user),
+                        "content": "这里什么也没有呢...",
+                    },
                 }
-            }]
+            ]
         await bot.send_group_forward_msg(group_id=group, messages=node)
     elif _type == "info":
         key = msg[1]
         data = load_key_history()
         for i in data:
-            if i['key'] == key:
+            if i["key"] == key:
                 msg = (
                     f"{key} 审核信息:\n"
                     f"是否通过：{i['pass']}"
@@ -147,35 +144,31 @@ async def _train(bot: Bot, event: GroupMessageEvent) -> None:
                 )
                 await train.finish(msg)
             else:
-                await train.finish('未找到相关信息...')
+                await train.finish("未找到相关信息...")
     elif _type == "r":
         key = msg[1]
         args = int(msg[2])
         data = load_key_temp_data()
         if user in Config.BotSelfConfig.superusers:
             if args not in [0, 1]:
-                await train.finish('请检查输入...')
+                await train.finish("请检查输入...")
             else:
                 for i in data:
                     if bool(args):
-                        if i['key'] == key:
-                            msg = (
-                                "好欸学到了新的知识！\n"
-                                f"关键词：{i['key']}\n"
-                                f"回复：{i['repo']}"
-                            )
-                            add_key(i['key'], i['repo'])
+                        if i["key"] == key:
+                            msg = "好欸学到了新的知识！\n" f"关键词：{i['key']}\n" f"回复：{i['repo']}"
+                            add_key(i["key"], i["repo"])
                             add_history(i)
                             await train.finish(msg)
                         else:
-                            await train.finish('未找到相关信息...')
+                            await train.finish("未找到相关信息...")
                     else:
                         add_history(i, False)
                         if del_key_temp(i):
-                            await train.finish('已标记为不通过')
+                            await train.finish("已标记为不通过")
                         else:
-                            await train.finish('未找到相关信息')
+                            await train.finish("未找到相关信息")
         else:
-            await train.finish('不行哦~你的权限使得你没法这样做！')
+            await train.finish("不行哦~你的权限使得你没法这样做！")
     else:
-        await train.finish('请检查输入...')
+        await train.finish("请检查输入...")

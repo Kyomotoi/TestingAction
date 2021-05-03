@@ -10,7 +10,7 @@ from ATRI.exceptions import LoadingError
 from ATRI.utils.list import count_list, del_list_aim
 
 
-HITOKOTO_DIR = Path('.') / 'ATRI' / 'data' / 'database' / 'hitokoto'
+HITOKOTO_DIR = Path(".") / "ATRI" / "data" / "database" / "hitokoto"
 sick_list = []
 
 
@@ -26,11 +26,9 @@ __doc__ = """
 """
 
 hitokoto = sv.on_command(
-    cmd="一言",
-    docs=__doc__,
-    aliases={"抑郁一下", "网抑云"},
-    rule=is_in_service('一言') & to_bot()
+    cmd="一言", docs=__doc__, aliases={"抑郁一下", "网抑云"}, rule=is_in_service("一言") & to_bot()
 )
+
 
 @hitokoto.handle()
 async def _hitokoto(bot: Bot, event: MessageEvent) -> None:
@@ -42,10 +40,7 @@ async def _hitokoto(bot: Bot, event: MessageEvent) -> None:
         await hitokoto.finish("额......需要咱安慰一下嘛~？")
     elif count_list(sick_list, user) == 6:
         sick_list = del_list_aim(sick_list, user)
-        msg = (
-            "如果心里感到难受就赶快去睡觉！别再憋自己了！\n"
-            "我...我会守在你身边的！...嗯..一定"
-        )
+        msg = "如果心里感到难受就赶快去睡觉！别再憋自己了！\n" "我...我会守在你身边的！...嗯..一定"
         await hitokoto.finish(msg)
     else:
         sick_list.append(user)
@@ -56,4 +51,4 @@ async def _hitokoto(bot: Bot, event: MessageEvent) -> None:
             data = json.loads(path.read_bytes())
         except LoadingError:
             raise LoadingError("Loading error!")
-        await hitokoto.finish(data[randint(1, len(data) - 1)]['hitokoto'])
+        await hitokoto.finish(data[randint(1, len(data) - 1)]["hitokoto"])

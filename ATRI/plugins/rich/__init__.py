@@ -15,16 +15,17 @@ temp_list = []
 
 bilibili_rich = sv.on_message()
 
+
 @bilibili_rich.handle()
 async def _bilibili_rich(bot: Bot, event: MessageEvent) -> None:
     global temp_list
     msg = str(event.raw_message).replace("\\", "")
     bv = False
-    
+
     if "qqdocurl" not in msg:
         if "av" in msg:
             try:
-                av = re.findall(r"(av\d+)", msg)[0].replace('av', '')
+                av = re.findall(r"(av\d+)", msg)[0].replace("av", "")
             except:
                 return
         else:
@@ -38,32 +39,31 @@ async def _bilibili_rich(bot: Bot, event: MessageEvent) -> None:
         bv_url = re.findall(patt, msg)
         bv_url = bv_url[3]
         async with ClientSession() as session:
-            async with session.get(
-                url=bv_url) as r:
+            async with session.get(url=bv_url) as r:
                 bv = re.findall(r"(BV\w+)", str(r.url))
                 av = dec(bv[0])
-    
+
     if not bv:
         if "av" in msg:
             try:
-                av = re.findall(r"(av\d+)", msg)[0].replace('av', '')
+                av = re.findall(r"(av\d+)", msg)[0].replace("av", "")
             except:
                 return
         else:
             return
-    
+
     if count_list(temp_list, av) == 4:
         await bot.send(event, "你是怕别人看不到么发这么多次？")
         temp_list = del_list_aim(temp_list, av)
         return
-    
+
     temp_list.append(av)
-    
+
     try:
         URL = f"https://api.kyomotoi.moe/api/bilibili/v2/?aid={av}"
     except:
         return
-    data = json.loads(await get_bytes(URL))['data']
+    data = json.loads(await get_bytes(URL))["data"]
     repo = (
         f"{av} INFO:\n"
         f"Title: {data['title']}\n"
