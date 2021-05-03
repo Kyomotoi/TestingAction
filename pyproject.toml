@@ -20,6 +20,8 @@ APScheduler = "^3.7.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.1"
+black = "^21.4b0"
+mypy = "^0.812"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
